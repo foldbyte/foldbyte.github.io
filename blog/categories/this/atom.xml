@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: This | My Octopress Blog]]></title>
+  <link href="http://foldbyte.github.io/blog/categories/this/atom.xml" rel="self"/>
+  <link href="http://foldbyte.github.io/"/>
+  <updated>2018-07-19T23:10:46+02:00</updated>
+  <id>http://foldbyte.github.io/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Function Contexts in JavaScript]]></title>
+    <link href="http://foldbyte.github.io/blog/2018/07/19/function-contexts-in-javascript/"/>
+    <updated>2018-07-19T23:08:12+02:00</updated>
+    <id>http://foldbyte.github.io/blog/2018/07/19/function-contexts-in-javascript</id>
+    <content type="html"><![CDATA[<p>Some time ago I had a discussion with my team mate about function contexts in JavaScript. It was quite confusing for him and when he started asking me more and more questions regarding this topic I felt that it&rsquo;s confusing for me too.
+That&rsquo;s why I decided to gather all these oddities and write a blog post.</p>
+
+<p>Here we go!</p>
+
+<p>Every JavaScript developer should know what functions are and how they are created. Everyone should also know what is the <code>this</code> keyword in terms of functions and their contexts.</p>
+
+<p>If you&rsquo;re coming from Object-Oriented languages like Java or C++ you know what <code>this</code> means.</p>
+
+<p>But do you know what it means in JS world? :)</p>
+
+<p>Let&rsquo;s see.</p>
+
+<p>For an OO programmer <code>this</code> is the object on which a given method was called.</p>
+
+<p>So in <strong>Java</strong> when we have:</p>
+
+<pre><code class="java">    class Person {
+        Person(final String name) {
+            this.name = name;
+        }
+        private String name;
+        public String getName() {
+            return this.name;
+        }
+    }
+
+    Person p = new Person("Jerry");
+    p.getName();    //returns "Jerry"
+</code></pre>
+
+<p>We&rsquo;re calling a <code>getName()</code> method on the object <strong>p</strong> and get the name. So far so good.</p>
+
+<p>This works more less the same in JavaScript:</p>
+
+<pre><code class="javascript">    function Person(name) {
+        this.name = name;
+        this.getName = function() {
+            return this.name;
+        }
+    }
+
+    const person = new Person("Jerry");
+    person.getName(); //returns "Jerry"
+</code></pre>
+
+<p>I think that&rsquo;s the end of similarities with other languages :)</p>
+
+<p>In JavaScript we can invoke a function on various ways.</p>
+
+<ul>
+<li>as a &ldquo;function&rdquo;</li>
+<li>as a method</li>
+<li>as a constructor using <code>new myFunction()</code></li>
+<li>or we could use methods call/apply</li>
+</ul>
+
+
+<p>Today we&rsquo;re gonna take care of how the function context is being created in different scenarios. We will focus mainly on the first three use cases.</p>
+
+<pre><code class="javascript">function globalFunction() {
+    return this;
+}
+</code></pre>
+
+<p>A function in JavaScript can be created like the example above. The function context in this case is the <strong>window</strong> object.</p>
+
+<p>A bit more interesting case about calling functions and this. What will happen here?</p>
+
+<pre><code class="javascript">function Puzzle() {
+    this.getPuzzle = function() {
+        return this;
+    }
+
+    return 0;
+}
+
+var p = new Puzzle();
+</code></pre>
+
+<p>The answer is: everything will work just fine. We get the new object Puzzle. The <strong>return 0</strong> is simply ignored.</p>
+
+<p>Ok but let&rsquo;s change it a little bit:</p>
+
+<pre><code class="javascript">var puzzle = {
+    puzzleLevel: "hard"
+}
+
+function Puzzle() {
+    this.puzzleLevel = "easy";
+    return puzzle;
+}
+
+var p = new Puzzle();
+</code></pre>
+
+<p>What if we try to use an already existing object and return it from constructor functions?</p>
+
+<p>It turns out that when we return a non-object value from a constructor the value will be ignored and a newly created object will be returned.</p>
+
+<p>If however we try to return an object from a constructor JavaScript will return this object and the object created with the <strong>new</strong> keyword will be ignored.</p>
+
+<p>There&rsquo;s still yet another case.</p>
+
+<p>What if we try to call a function without the <strong>new</strong> keyword?</p>
+
+<p>Let&rsquo;s check:</p>
+
+<pre><code class="javascript">function Player() {
+    this.play = function() {
+        return "A player plays the game...";
+    }
+}
+
+const player = Player(); //???
+</code></pre>
+
+<p>We can call the above function as a function but the <code>play()</code> method will be created on global context in case if we&rsquo;re not using a non-strict mode.</p>
+
+<p>We get:
+<code>
+Uncaught TypeError: Cannot read property 'play' of undefined.
+</code></p>
+
+<p>And now let&rsquo;s try to run the same code in a <code>&ldquo;use strict&rdquo;</code> mode.</p>
+
+<p>Remember that in a &ldquo;strict mode&rdquo; the <code>this</code> is undefined.</p>
+
+<pre><code class="javascript">function Player() {
+    "use strict"
+    this.play = function() {
+        return "A player plays the game...";
+    }
+}
+
+const player = Player(); //???
+</code></pre>
+
+<p>After running the code we get:</p>
+
+<pre><code>Uncaught TypeError: Cannot set property 'play' of undefined.
+</code></pre>
+
+<p><strong>This is a good case to show why the <em>&ldquo;strict mode&rdquo;</em> was even introduced.</strong></p>
+
+<p>That&rsquo;s it for now. I hope that after reading this post you have a much better understanding of what is going on behind the scenes and how JavaScript creates function contexts.</p>
+
+<p>Thanks for reading!</p>
+]]></content>
+  </entry>
+  
+</feed>

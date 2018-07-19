@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://foldbyte.github.io/blog/2018/07/19/function-contexts-in-javascript/</loc>
+<lastmod>2018-07-19T23:08:12+02:00</lastmod>
+</url>
+<url>
 <loc>http://foldbyte.github.io/blog/archives/</loc>
 </url>
 <url>
 <loc>http://foldbyte.github.io/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/javascript/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/functions/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/context/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/this/</loc>
 </url>
 </urlset>

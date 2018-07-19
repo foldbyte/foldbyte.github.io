@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://foldbyte.github.io/atom.xml" rel="self"/>
   <link href="http://foldbyte.github.io/"/>
-  <updated>2018-07-19T23:06:20+02:00</updated>
+  <updated>2018-07-19T23:10:46+02:00</updated>
   <id>http://foldbyte.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,5 +12,230 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Function Contexts in JavaScript]]></title>
+    <link href="http://foldbyte.github.io/blog/2018/07/19/function-contexts-in-javascript/"/>
+    <updated>2018-07-19T23:08:12+02:00</updated>
+    <id>http://foldbyte.github.io/blog/2018/07/19/function-contexts-in-javascript</id>
+    <content type="html"><![CDATA[<p>Some time ago I had a discussion with my team mate about function contexts in JavaScript. It was quite confusing for him and when he started asking me more and more questions regarding this topic I felt that it&rsquo;s confusing for me too.
+That&rsquo;s why I decided to gather all these oddities and write a blog post.</p>
+
+<p>Here we go!</p>
+
+<p>Every JavaScript developer should know what functions are and how they are created. Everyone should also know what is the <code>this</code> keyword in terms of functions and their contexts.</p>
+
+<p>If you&rsquo;re coming from Object-Oriented languages like Java or C++ you know what <code>this</code> means.</p>
+
+<p>But do you know what it means in JS world? :)</p>
+
+<p>Let&rsquo;s see.</p>
+
+<p>For an OO programmer <code>this</code> is the object on which a given method was called.</p>
+
+<p>So in <strong>Java</strong> when we have:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">Person</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Person</span><span class="o">(</span><span class="s">&quot;Jerry&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">p</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>    <span class="c1">//returns &quot;Jerry&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&rsquo;re calling a <code>getName()</code> method on the object <strong>p</strong> and get the name. So far so good.</p>
+
+<p>This works more less the same in JavaScript:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Jerry&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">person</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span> <span class="c1">//returns &quot;Jerry&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I think that&rsquo;s the end of similarities with other languages :)</p>
+
+<p>In JavaScript we can invoke a function on various ways.</p>
+
+<ul>
+<li>as a &ldquo;function&rdquo;</li>
+<li>as a method</li>
+<li>as a constructor using <code>new myFunction()</code></li>
+<li>or we could use methods call/apply</li>
+</ul>
+
+
+<p>Today we&rsquo;re gonna take care of how the function context is being created in different scenarios. We will focus mainly on the first three use cases.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">globalFunction</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A function in JavaScript can be created like the example above. The function context in this case is the <strong>window</strong> object.</p>
+
+<p>A bit more interesting case about calling functions and this. What will happen here?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Puzzle</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">getPuzzle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Puzzle</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The answer is: everything will work just fine. We get the new object Puzzle. The <strong>return 0</strong> is simply ignored.</p>
+
+<p>Ok but let&rsquo;s change it a little bit:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">puzzle</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">puzzleLevel</span><span class="o">:</span> <span class="s2">&quot;hard&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">Puzzle</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">puzzleLevel</span> <span class="o">=</span> <span class="s2">&quot;easy&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">puzzle</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Puzzle</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What if we try to use an already existing object and return it from constructor functions?</p>
+
+<p>It turns out that when we return a non-object value from a constructor the value will be ignored and a newly created object will be returned.</p>
+
+<p>If however we try to return an object from a constructor JavaScript will return this object and the object created with the <strong>new</strong> keyword will be ignored.</p>
+
+<p>There&rsquo;s still yet another case.</p>
+
+<p>What if we try to call a function without the <strong>new</strong> keyword?</p>
+
+<p>Let&rsquo;s check:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Player</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;A player plays the game...&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">player</span> <span class="o">=</span> <span class="nx">Player</span><span class="p">();</span> <span class="c1">//???</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can call the above function as a function but the <code>play()</code> method will be created on global context in case if we&rsquo;re not using a non-strict mode.</p>
+
+<p>We get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Uncaught</span> <span class="nx">TypeError</span><span class="o">:</span> <span class="nx">Cannot</span> <span class="nx">read</span> <span class="nx">property</span> <span class="s1">&#39;play&#39;</span> <span class="nx">of</span> <span class="kc">undefined</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now let&rsquo;s try to run the same code in a <code>&ldquo;use strict&rdquo;</code> mode.</p>
+
+<p>Remember that in a &ldquo;strict mode&rdquo; the <code>this</code> is undefined.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Player</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;use strict&quot;</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;A player plays the game...&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">player</span> <span class="o">=</span> <span class="nx">Player</span><span class="p">();</span> <span class="c1">//???</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After running the code we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Uncaught</span> <span class="nx">TypeError</span><span class="o">:</span> <span class="nx">Cannot</span> <span class="nx">set</span> <span class="nx">property</span> <span class="s1">&#39;play&#39;</span> <span class="nx">of</span> <span class="kc">undefined</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>This is a good case to show why the <em>&ldquo;strict mode&rdquo;</em> was even introduced.</strong></p>
+
+<p>That&rsquo;s it for now. I hope that after reading this post you have a much better understanding of what is going on behind the scenes and how JavaScript creates function contexts.</p>
+
+<p>Thanks for reading!</p>
+]]></content>
+  </entry>
   
 </feed>
