@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Kubernetes | The Foldbyte's blog]]></title>
+  <link href="http://foldbyte.github.io/blog/categories/kubernetes/atom.xml" rel="self"/>
+  <link href="http://foldbyte.github.io/"/>
+  <updated>2019-11-03T09:01:51+01:00</updated>
+  <id>http://foldbyte.github.io/</id>
+  <author>
+    <name><![CDATA[M.]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Useful Gcloud/Kubernetes Commands]]></title>
+    <link href="http://foldbyte.github.io/blog/2019/05/10/useful-gloud-slash-kubernetes-commands/"/>
+    <updated>2019-05-10T09:08:21+02:00</updated>
+    <id>http://foldbyte.github.io/blog/2019/05/10/useful-gloud-slash-kubernetes-commands</id>
+    <content type="html"><![CDATA[<p>Doing Devops work from time to time makes me feel dizzy because I constantly forget many important commands when using <strong>kubectl</strong> or <strong>gcloud</strong>, e.g: how to change a context in kubectl or how to quickly create a cluster on GCloud, and so on&hellip;
+Sure you can go to the documentation and easily find it but there are many pages with explanation, tutorials so one can get lost.</p>
+
+<p>Here I&rsquo;m gonna publish some of the most useful commands I use in my daily work.</p>
+
+<h2>gcloud commands</h2>
+
+<p>Fist of all you create a cluster that consists of three nodes
+<code>console
+gcloud container clusters create cluster_name --num-nodes 3 --machine-type g1-small (or f1-micro)
+</code>
+Personally I prefer g1-small because then you get: 0.5vCPU and 1.7GB of RAM whereas with f1-micro you get only 0.2vCPU and 0.6GB of RAM.
+It might be a problem if you start using helm. You&rsquo;ll be able to run a simple Node.js application but won&rsquo;t be able to run for instance: Prometheus.
+You can even have problem with installing helm&rsquo;s Tiller ;)
+Of course there are many many other machine types. To check them simply type:
+<code>console
+gcloud compute machine-types list
+</code>
+or check: <a href="https://cloud.google.com/compute/docs/machine-types">Google Cloud Machine Types</a></p>
+
+<p>When a cluster is already created we need to add credentials to be able to use <strong>kubectl</strong> command:
+<code>console
+gcloud container clusters get-credentials cluster_name
+</code>
+This command generates an entry for a given <strong>cluster_name</strong> so that we can use kubectl on that cluster.</p>
+
+<h2>kubectl</h2>
+
+<p>As a DevOps Engineer we can operate on many clusters, for example we have minikube installed on our local machines, we&rsquo;re responsible for GKE or EKS clusters. We must switch between those environments:
+<code>console
+kubectl config get-contexts
+</code>
+The command above shows all those contexts/environments.</p>
+
+<p>So if you want to switch to another cluster just type:
+<code>console
+kubectl config set-context context_name
+</code></p>
+
+<p>It&rsquo;s time to see what we&rsquo;ve created before. To see of how many nodes consists your cluster type:
+<code>console
+kubectl get nodes
+</code></p>
+
+<p>To see all the pods you have in your cluster type:
+<code>console
+kubectl get pods
+</code></p>
+
+<pre><code class="console">kubectl expose rc cluster_name --type=LoadBalancer --name rc_name
+</code></pre>
+
+<p>To see all services in your cluster type:
+<code>console
+kubectl get services //or kubectl get svc
+</code></p>
+
+<p>If you want to have more replicas of the particular pod type:
+<code>console
+kubectl scale rc cluster_name --replicas=3
+</code></p>
+
+<pre><code class="console">kubectl get pods | nodes -o wide 
+</code></pre>
+
+<pre><code class="console">kubectl logs pod_name
+</code></pre>
+
+<p>If there are more than one container in the Pod you need to add <em>-c</em> and then container name:</p>
+
+<pre><code class="console">kubectl logs pod_name -c container_name
+</code></pre>
+
+<h2>Port Forwarding.</h2>
+
+<p>When you want to talk to a specific Pod especially during development or when debugging you can connect to the Pod like this:
+<code>console
+kubectl port-forward pod_name 9000:8080
+</code>
+This command is very useful because you can talk to your pod as if it was on your local machine. For example:
+<code>console
+curl localhost:9000
+</code>
+You no longer have to create services to expose the pod on the Internet.</p>
+
+<p>Sometimes you want to test your service from inside of the cluster.
+<code>
+kubectl exec pod_name  -- curl -s http://SERVICE_IP
+</code></p>
+
+<p>Double dash shows the end of kubectl parameters. Everything after that is the command that should be executed in the Pod.</p>
+
+<p>This allows you to hit your internal service from inside of the Pod(which itself is internal) that is backed by other pods and send you some response. This way you can check if the service works correctly without changing it and exposing to the Internet.</p>
+
+<h2>Troubleshooting.</h2>
+
+<pre><code>kubectl run dnsutils --image=tutum/dnsutils --generator=run-pod/v1 --command  -- sleep infinity
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

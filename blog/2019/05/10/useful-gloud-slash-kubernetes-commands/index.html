@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Useful Gcloud/Kubernetes Commands - The Foldbyte's blog</title>
+  <meta name="author" content="M.">
+
+  
+  <meta name="description" content="Doing Devops work from time to time makes me feel dizzy because I constantly forget many important commands when using kubectl or gcloud, e.g: how to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://foldbyte.github.io/blog/2019/05/10/useful-gloud-slash-kubernetes-commands">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="The Foldbyte's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-122684353-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">The Foldbyte's blog</a></h1>
+  
+    <h2>Technical stuff for developers</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscribe" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS" target="_blank"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="25" viewbox="0 0 100 100"><path class="social" d="M 13.310204,73.332654 C 5.967347,73.332654 0,79.322448 0,86.621428 c 0,7.338776 5.967347,13.262246 13.310204,13.262246 7.370408,0 13.328572,-5.92245 13.328572,-13.262246 0,-7.29898 -5.958164,-13.288774 -13.328572,-13.288774 z M 0.01530612,33.978572 V 53.143878 C 12.493878,53.143878 24.229592,58.02347 33.068368,66.865306 41.894898,75.685714 46.767346,87.47449 46.767346,100 h 19.25 C 66.017346,63.592858 36.4,33.979592 0.01530612,33.978572 l 0,0 z M 0.03877552,0 V 19.17449 C 44.54796,19.17551 80.77551,55.437756 80.77551,100 H 100 C 100,44.87653 55.15102,0 0.03877552,0 z"></path></svg></a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
+      <form action="https://www.google.com/search" method="get">
+        <fieldset role="search">
+          <input type="hidden" name="sitesearch" value="foldbyte.github.io" />
+    
+          <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+      </form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Useful Gcloud/Kubernetes Commands</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2019-05-10T09:08:21+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2019</span></span> <span class='time'>9:08 am</span></time>
+        
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Doing Devops work from time to time makes me feel dizzy because I constantly forget many important commands when using <strong>kubectl</strong> or <strong>gcloud</strong>, e.g: how to change a context in kubectl or how to quickly create a cluster on GCloud, and so on&hellip;
+Sure you can go to the documentation and easily find it but there are many pages with explanation, tutorials so one can get lost.</p>
+
+<p>Here I&rsquo;m gonna publish some of the most useful commands I use in my daily work.</p>
+
+<h2>gcloud commands</h2>
+
+<p>Fist of all you create a cluster that consists of three nodes</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">gcloud container clusters create cluster_name --num-nodes 3 --machine-type g1-small (or f1-micro)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Personally I prefer g1-small because then you get: 0.5vCPU and 1.7GB of RAM whereas with f1-micro you get only 0.2vCPU and 0.6GB of RAM.
+It might be a problem if you start using helm. You&rsquo;ll be able to run a simple Node.js application but won&rsquo;t be able to run for instance: Prometheus.
+You can even have problem with installing helm&rsquo;s Tiller ;)
+Of course there are many many other machine types. To check them simply type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">gcloud compute machine-types list</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or check: <a href="https://cloud.google.com/compute/docs/machine-types">Google Cloud Machine Types</a></p>
+
+<p>When a cluster is already created we need to add credentials to be able to use <strong>kubectl</strong> command:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">gcloud container clusters get-credentials cluster_name</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This command generates an entry for a given <strong>cluster_name</strong> so that we can use kubectl on that cluster.</p>
+
+<h2>kubectl</h2>
+
+<p>As a DevOps Engineer we can operate on many clusters, for example we have minikube installed on our local machines, we&rsquo;re responsible for GKE or EKS clusters. We must switch between those environments:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl config get-contexts</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The command above shows all those contexts/environments.</p>
+
+<p>So if you want to switch to another cluster just type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl config set-context context_name</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&rsquo;s time to see what we&rsquo;ve created before. To see of how many nodes consists your cluster type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl get nodes</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To see all the pods you have in your cluster type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl get pods</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl expose rc cluster_name --type=LoadBalancer --name rc_name</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To see all services in your cluster type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl get services //or kubectl get svc</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you want to have more replicas of the particular pod type:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl scale rc cluster_name --replicas=3</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl get pods | nodes -o wide </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl logs pod_name</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If there are more than one container in the Pod you need to add <em>-c</em> and then container name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl logs pod_name -c container_name</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Port Forwarding.</h2>
+
+<p>When you want to talk to a specific Pod especially during development or when debugging you can connect to the Pod like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl port-forward pod_name 9000:8080</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This command is very useful because you can talk to your pod as if it was on your local machine. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">curl localhost:9000</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You no longer have to create services to expose the pod on the Internet.</p>
+
+<p>Sometimes you want to test your service from inside of the cluster.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl exec pod_name  -- curl -s http://SERVICE_IP</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Double dash shows the end of kubectl parameters. Everything after that is the command that should be executed in the Pod.</p>
+
+<p>This allows you to hit your internal service from inside of the Pod(which itself is internal) that is backed by other pods and send you some response. This way you can check if the service works correctly without changing it and exposing to the Internet.</p>
+
+<h2>Troubleshooting.</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="go">kubectl run dnsutils --image=tutum/dnsutils --generator=run-pod/v1 --command  -- sleep infinity</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    M.
+  
+  </span></span>
+
+
+      
+
+
+
+
+<time class='entry-date' datetime='2019-05-10T09:08:21+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2019</span></span> <span class='time'>9:08 am</span></time>
+      
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/cloud/'>cloud</a>, <a class='category' href='/blog/categories/devops/'>devops</a>, <a class='category' href='/blog/categories/gcp/'>gcp</a>, <a class='category' href='/blog/categories/k8s/'>k8s</a>, <a class='category' href='/blog/categories/kubernetes/'>kubernetes</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://foldbyte.github.io/blog/2019/05/10/useful-gloud-slash-kubernetes-commands/" data-via="" data-counturl="http://foldbyte.github.io/blog/2019/05/10/useful-gloud-slash-kubernetes-commands/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2018/07/19/function-contexts-in-javascript/" title="Previous Post: Function contexts in JavaScript">&laquo; Function contexts in JavaScript</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - M. -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://foldbyte.github.io/blog/2019/05/10/useful-gloud-slash-kubernetes-commands/</loc>
+<lastmod>2019-05-10T09:08:21+02:00</lastmod>
+</url>
+<url>
 <loc>http://foldbyte.github.io/blog/2018/07/19/function-contexts-in-javascript/</loc>
 <lastmod>2018-07-19T23:08:12+02:00</lastmod>
 </url>
@@ -21,5 +25,20 @@
 </url>
 <url>
 <loc>http://foldbyte.github.io/blog/categories/this/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/kubernetes/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/k8s/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/devops/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/gcp/</loc>
+</url>
+<url>
+<loc>http://foldbyte.github.io/blog/categories/cloud/</loc>
 </url>
 </urlset>
